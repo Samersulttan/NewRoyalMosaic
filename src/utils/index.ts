@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 
 // Configure axios defaults
-axios.defaults.baseURL = 'http://localhost:8000/api/v1';
+axios.defaults.baseURL = 'http://77.37.47.148:8000/api/v1';
 
 // Add token to headers if it exists
 const token = Cookies.get('token');
