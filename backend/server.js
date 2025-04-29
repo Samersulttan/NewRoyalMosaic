@@ -25,18 +25,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 // app.use(express.static(path.join(__dirname, 'uploads')));
-app.use(express.static(path.join(__dirname, 'uploads'), {
-  maxAge: '1y', // Cache for 1 year
-  etag: true,
-  lastModified: true,
-  setHeaders: (res, path) => {
-    // Set caching headers for images
-    if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.gif')) {
-      res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year in seconds
-      res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString()); // 1 year from now
-    }
-  }
-}));
+app.use(
+  express.static(path.join(__dirname, 'uploads'), {
+    maxAge: '1y', // Cache for 1 year
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, path) => {
+      // Set caching headers for images
+      if (
+        path.endsWith('.jpg') ||
+        path.endsWith('.jpeg') ||
+        path.endsWith('.png') ||
+        path.endsWith('.gif')
+      ) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year in seconds
+        res.setHeader(
+          'Expires',
+          new Date(Date.now() + 31536000000).toUTCString()
+        ); // 1 year from now
+      }
+    },
+  })
+);
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -46,10 +56,9 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/departments', departmentRoute);
 app.use('/api/v1/categories', categoryRoute);
-app.use('/api/v1/products',  productRoute);
+app.use('/api/v1/products', productRoute);
 app.use('/api/v1/catalog-requests', catalogRoute);
 app.use('/api/v1/download', downloadRoute);
-
 
 // Handle unhandled routes
 app.all('*', (req, res, next) => {
@@ -82,4 +91,3 @@ process.on('unhandledRejection', (err) => {
   console.error(`UnhandledRejection Error: ${err.name} | ${err.message}`);
   process.exit(1);
 });
-
