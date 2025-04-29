@@ -50,6 +50,7 @@ departmentSchema.pre('save', function(next) {
 // Set image URL
 departmentSchema.post('init', (doc) => {
   if (doc.image) {
+    console.log(`====================${process.env.BASE_URL}/departments/${doc.image}`)
     doc.image = `${process.env.BASE_URL}/departments/${doc.image}`;
   }
 });
