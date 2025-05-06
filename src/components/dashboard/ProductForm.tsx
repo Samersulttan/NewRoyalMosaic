@@ -12,7 +12,7 @@ const ProductForm = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { records: categories } = useAppSelector((state) => state.categories);
   const { createStatus, createError } = useAppSelector((state) => state.products);
-
+console.log(createError)
   const [formData, setFormData] = useState({
     name: '',
     description: '',

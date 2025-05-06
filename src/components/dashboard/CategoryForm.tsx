@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useSnackbar } from 'notistack';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { actCreateCategory, resetCategoryCreateStatus } from '../../store/categories/categoriesSlice';
+import {
+  actCreateCategory,
+  resetCategoryCreateStatus,
+} from '../../store/categories/categoriesSlice';
 import { actGetDepartments } from '../../store/departments/departmentsSlice';
 import { compressImage } from '../../utils/imageCompression';
 import CategoryList from './CategoryList';
@@ -11,13 +14,17 @@ const CategoryForm = () => {
   const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const { records: departments } = useAppSelector((state) => state.departments);
-  const { createStatus, createError } = useAppSelector((state) => state.categories);
+  const { createStatus, createError } = useAppSelector(
+    (state) => state.categories
+  );
+
+  console.log(createError);
 
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     mainImage: null as File | null,
-    departmentId: ''
+    departmentId: '',
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -26,9 +33,13 @@ const CategoryForm = () => {
     dispatch(actGetDepartments());
   }, [dispatch]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,15 +58,18 @@ const CategoryForm = () => {
           maxSizeMB: 1,
           maxWidth: 1920,
           maxHeight: 1080,
-          useWebWorker: true
+          useWebWorker: true,
         });
 
-        setFormData(prev => ({ ...prev, mainImage: compressedFile }));
+        setFormData((prev) => ({ ...prev, mainImage: compressedFile }));
       } catch (error) {
-        enqueueSnackbar(error instanceof Error ? error.message : 'Error processing image', {
-          variant: 'error',
-          style: { backgroundColor: '#EF4444', color: 'white' }
-        });
+        enqueueSnackbar(
+          error instanceof Error ? error.message : 'Error processing image',
+          {
+            variant: 'error',
+            style: { backgroundColor: '#EF4444', color: 'white' },
+          }
+        );
       } finally {
         setIsProcessing(false);
       }
@@ -64,41 +78,48 @@ const CategoryForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.mainImage) {
-      enqueueSnackbar('الرجاء اختيار صورة للفئة', { 
+      enqueueSnackbar('الرجاء اختيار صورة للفئة', {
         variant: 'error',
-        style: { backgroundColor: '#EF4444', color: 'white' }
+        style: { backgroundColor: '#EF4444', color: 'white' },
       });
       return;
     }
 
     if (!formData.departmentId) {
-      enqueueSnackbar('الرجاء اختيار القسم', { 
+      enqueueSnackbar('الرجاء اختيار القسم', {
         variant: 'error',
-        style: { backgroundColor: '#EF4444', color: 'white' }
+        style: { backgroundColor: '#EF4444', color: 'white' },
       });
       return;
     }
 
     try {
-      await dispatch(actCreateCategory({
-        name: formData.name,
-        description: formData.description,
-        mainImage: formData.mainImage,
-        departmentId: formData.departmentId
-      })).unwrap();
+      await dispatch(
+        actCreateCategory({
+          name: formData.name,
+          description: formData.description,
+          mainImage: formData.mainImage,
+          departmentId: formData.departmentId,
+        })
+      ).unwrap();
 
       enqueueSnackbar('تم إضافة الفئة بنجاح', {
         variant: 'success',
-        style: { backgroundColor: '#10B981', color: 'white' }
+        style: { backgroundColor: '#10B981', color: 'white' },
       });
 
-      setFormData({ name: '', description: '', mainImage: null, departmentId: '' });
+      setFormData({
+        name: '',
+        description: '',
+        mainImage: null,
+        departmentId: '',
+      });
     } catch (error) {
       enqueueSnackbar(error as string, {
         variant: 'error',
-        style: { backgroundColor: '#EF4444', color: 'white' }
+        style: { backgroundColor: '#EF4444', color: 'white' },
       });
     } finally {
       dispatch(resetCategoryCreateStatus());
@@ -109,7 +130,11 @@ const CategoryForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="bg-black p-8 rounded-lg shadow-lg space-y-6" dir="rtl">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-black p-8 rounded-lg shadow-lg space-y-6"
+        dir="rtl"
+      >
         <h2 className="text-2xl font-bold mb-6 text-center">إضافة فئة جديدة</h2>
 
         <div>
@@ -168,7 +193,9 @@ const CategoryForm = () => {
             disabled={isSubmitting}
           />
           <p className="text-gray-400 text-sm mt-1">
-            {isProcessing ? 'جاري معالجة الصورة...' : 'يرجى اختيار صورة بحجم مناسب'}
+            {isProcessing
+              ? 'جاري معالجة الصورة...'
+              : 'يرجى اختيار صورة بحجم مناسب'}
           </p>
         </div>
 
