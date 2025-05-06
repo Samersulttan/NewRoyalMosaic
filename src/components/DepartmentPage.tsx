@@ -8,6 +8,7 @@ import LoadingSpinner from './shared/LoadingSpinner';
 import ErrorMessage from './shared/ErrorMessage';
 import EmptyState from './shared/EmptyState';
 import CategoryGrid from './shared/CategoryGrid';
+import ProductGrid from './shared/ProductGrid';
 import ProductCarousel from './shared/ProductCarousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
@@ -25,6 +26,7 @@ const DepartmentPage = ({ path, title }: DepartmentPageProps) => {
     (state) => state.products.categoryProducts
   );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(false);
 
@@ -32,6 +34,7 @@ const DepartmentPage = ({ path, title }: DepartmentPageProps) => {
   useEffect(() => {
     return () => {
       setSelectedCategory(null);
+      setSelectedProduct(null);
       setSelectedImageIndex(0);
       setImagesLoaded(false);
       dispatch(departmentCategoriesCleanUp());
@@ -89,10 +92,8 @@ const DepartmentPage = ({ path, title }: DepartmentPageProps) => {
         };
       };
 
-      // Start preloading all category images
       categories.forEach((category, index) => {
         if (index === 0) {
-          // First image gets priority loading
           const img = new Image();
           img.src = category.mainImage;
           img.loading = 'eager';
@@ -114,40 +115,10 @@ const DepartmentPage = ({ path, title }: DepartmentPageProps) => {
     }
   }, [categories]);
 
-  // Preload product images when a category is selected
-  useEffect(() => {
-    if (products && products.length > 0) {
-      const allImages = products.reduce((acc, product) => {
-        if (product.images && Array.isArray(product.images)) {
-          return [...acc, ...product.images];
-        }
-        return acc;
-      }, [] as string[]);
-
-      let isMounted = true;
-      console.log(isMounted)
-
-      
-
-      // Preload all product images
-      allImages.forEach((imageUrl, index) => {
-        const img = new Image();
-        img.src = imageUrl;
-        // First image gets priority loading
-        if (index === 0) {
-          img.loading = 'eager';
-        }
-      });
-
-      return () => {
-        isMounted = false;
-      };
-    }
-  }, [products]);
-
   const handleCategoryClick = async (categoryId: string) => {
     try {
       setSelectedCategory(categoryId);
+      setSelectedProduct(null);
       setSelectedImageIndex(0);
       await dispatch(actGetCategoryProducts(categoryId)).unwrap();
     } catch (error) {
@@ -155,10 +126,14 @@ const DepartmentPage = ({ path, title }: DepartmentPageProps) => {
     }
   };
 
-  const closeSlider = () => {
-    setSelectedCategory(null);
+  const handleProductClick = (productId: string) => {
+    setSelectedProduct(productId);
     setSelectedImageIndex(0);
-    dispatch(categoryProductsCleanUp());
+  };
+
+  const closeSlider = () => {
+    setSelectedProduct(null);
+    setSelectedImageIndex(0);
   };
 
   const getSelectedCategoryName = () => {
@@ -195,16 +170,48 @@ const DepartmentPage = ({ path, title }: DepartmentPageProps) => {
           Our {title} Collection
         </motion.h1>
 
-        <CategoryGrid 
-          categories={categories}
-          onCategoryClick={handleCategoryClick}
-        />
+        {!selectedCategory ? (
+          <CategoryGrid 
+            categories={categories}
+            onCategoryClick={handleCategoryClick}
+          />
+        ) : (
+          <div>
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className="mb-8 text-[#C69C6D] hover:text-[#E5B583] transition-colors flex items-center"
+            >
+              <svg 
+                className="w-5 h-5 mr-2" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M15 19l-7-7 7-7" 
+                />
+              </svg>
+              Back to Categories
+            </button>
+
+            <ProductGrid
+              products={products}
+              loading={productsLoading}
+              error={productsError}
+              onProductClick={handleProductClick}
+              categoryName={getSelectedCategoryName()}
+            />
+          </div>
+        )}
       </div>
 
       <ProductCarousel
-        isOpen={!!selectedCategory}
+        isOpen={!!selectedProduct}
         onClose={closeSlider}
-        products={products}
+        products={selectedProduct ? [products.find(p => p._id === selectedProduct)!] : []}
         loading={productsLoading}
         error={productsError}
         selectedImageIndex={selectedImageIndex}

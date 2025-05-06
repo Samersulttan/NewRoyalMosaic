@@ -68,7 +68,7 @@ const ProductCarousel = ({
             <IoClose size={24} />
           </button>
 
-          <div className="w-full max-w-6xl mx-auto">
+          <div className="w-full max-w-[90vw] mx-auto">
             {loading === 'pending' ? (
               <LoadingSpinner />
             ) : loading === 'failed' ? (
@@ -150,15 +150,19 @@ const ProductCarousel = ({
                         →
                       </button>
 
-                      {/* Caption */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                      {/* Product Information */}
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent"
+                      >
                         <h3 className="text-xl font-bold mb-2">
                           {allProductImages[selectedImageIndex]?.productName}
                         </h3>
-                        <p className="text-sm text-gray-200">
+                        <p className="text-gray-200 text-sm leading-relaxed">
                           {allProductImages[selectedImageIndex]?.productDescription}
                         </p>
-                      </div>
+                      </motion.div>
                     </div>
                   </div>
                 </div>

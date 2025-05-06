@@ -14,7 +14,7 @@ interface FormData {
 const CatalogForm = () => {
   const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const { loading } = useAppSelector((state) => state.catalog);
+  const { loading, error } = useAppSelector((state) => state.catalog);
 
   const [formData, setFormData] = useState<FormData>({
     email: '',

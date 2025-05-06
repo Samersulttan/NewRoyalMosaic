@@ -9,14 +9,14 @@ const WhatsAppButton = () => {
   return (
     <motion.button
       onClick={handleClick}
-      className="fixed bottom-8 left-8 z-50 bg-green-600 text-white p-4 rounded-full shadow-lg"
+      className="fixed bottom-8 left-8 z-50 bg-green-600/80 hover:bg-green-600 text-white p-4 rounded-full shadow-lg backdrop-blur-sm"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <FaWhatsapp size={24} />
+      <FaWhatsapp size={24} className="opacity-90" />
     </motion.button>
   );
 };

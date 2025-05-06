@@ -6,9 +6,20 @@ interface OptimizedImageProps {
   alt: string;
   className?: string;
   priority?: boolean;
+  placeholder?: string;
+  onLoad?: () => void;
+  onError?: () => void;
 }
 
-const OptimizedImage = ({ src, alt, className = '', priority = false }: OptimizedImageProps) => {
+const OptimizedImage = ({ 
+  src, 
+  alt, 
+  className = '', 
+  priority = false,
+  placeholder = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMjAyMDIwIi8+',
+  onLoad,
+  onError
+}: OptimizedImageProps) => {
   if (priority) {
     return (
       <img
@@ -17,6 +28,8 @@ const OptimizedImage = ({ src, alt, className = '', priority = false }: Optimize
         className={className}
         loading="eager"
         decoding="async"
+        onLoad={onLoad}
+        onError={onError}
       />
     );
   }
@@ -29,6 +42,17 @@ const OptimizedImage = ({ src, alt, className = '', priority = false }: Optimize
       effect="blur"
       loading="lazy"
       decoding="async"
+      placeholder={
+        <img
+          src={placeholder}
+          alt={`Loading ${alt}`}
+          className={className}
+          style={{ filter: 'blur(10px)' }}
+        />
+      }
+      onLoad={onLoad}
+      onError={onError}
+      wrapperClassName={className}
     />
   );
 };

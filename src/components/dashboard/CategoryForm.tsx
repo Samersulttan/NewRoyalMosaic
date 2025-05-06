@@ -11,7 +11,7 @@ const CategoryForm = () => {
   const dispatch = useAppDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const { records: departments } = useAppSelector((state) => state.departments);
-  const { createStatus} = useAppSelector((state) => state.categories);
+  const { createStatus, createError } = useAppSelector((state) => state.categories);
 
   const [formData, setFormData] = useState({
     name: '',
