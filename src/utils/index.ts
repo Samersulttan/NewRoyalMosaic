@@ -2,7 +2,11 @@ import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 
 // Configure axios defaults
-axios.defaults.baseURL = 'https://api.royalmosaic.ae/api/v1';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'https://api.royalmosaic.ae/api/v1';
+
+// Configure axios defaults
+axios.defaults.baseURL = API_BASE_URL;
 
 // Add token to headers if it exists
 const token = Cookies.get('token');
