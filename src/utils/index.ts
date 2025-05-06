@@ -2,8 +2,9 @@ import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 
 // Configure axios defaults
+
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://api.royalmosaic.ae/api/v1';
+  (import.meta as any).env?.VITE_API_URL || 'https://api.royalmosaic.ae/api/v1';
 
 // Configure axios defaults
 axios.defaults.baseURL = API_BASE_URL;
